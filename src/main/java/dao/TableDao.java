@@ -1,53 +1,48 @@
 package dao;
 
 import dao.api.ICRUDDao;
-import dto.Group;
+import dto.Table;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupDao implements AutoCloseable, ICRUDDao<Group> {
-
-    private static final GroupDao instance = new GroupDao();
-
-    public GroupDao() {
-    }
-
+public class TableDao implements ICRUDDao<Table> {
+    private final static TableDao instance = new TableDao();
     @Override
-    public List<Group> readAll(){
-        List<Group> groups = new ArrayList<>();
+    public List<Table> readAll() {
+        List<Table> table = new ArrayList<>();
 
         try (Connection connection = ConnectionFactory.getConnection();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(
                      "SELECT\n" +
+                             "    student_id,\n" +
                              "    group_id,\n" +
-                             "    group_number\n" +
                              "FROM\n" +
-                             "    groups\n;"
+                             "    table\n;"
              );
         ) {
             while (resultSet.next()){
-                groups.add(map(resultSet));
+                table.add(map(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return groups;
+        return table;
     }
 
     @Override
-    public Group get(int id){
+    public Table get(int id) {
         try (Connection connection = dao.ConnectionFactory.getConnection();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(
                      "SELECT\n" +
-                             "    group_id,\n" +
-                             "    group_number\n" +
+                             "    student_id,\n" +
+                             "    group_id\n" +
                              "FROM\n" +
-                             "    groups\n" +
-                             "WHERE group_id = " + id + ";"
+                             "    table\n;" +
+                             "WHERE student_id = " + id + ";"
              );
         ) {
             while (resultSet.next()){
@@ -60,14 +55,15 @@ public class GroupDao implements AutoCloseable, ICRUDDao<Group> {
     }
 
     @Override
-    public void add(Group group) {
+    public void add(Table item) {
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO\n" +
-                     "  groups(group_number)\n" +
+                     "  public.table(student_id, group_id)\n" +
                      "VALUES\n" +
-                     "  (?)");
+                     "  (?, ?)")
         ) {
-            statement.setString(1, group.getNumber());
+            statement.setInt(1, item.getStudentId());
+            statement.setInt(2, item.getGroupId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException();
@@ -75,17 +71,17 @@ public class GroupDao implements AutoCloseable, ICRUDDao<Group> {
     }
 
     @Override
-    public void update(int id, Group item) {
+    public void update(int id, Table item) {
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement("UPDATE\n" +
-                     "  groups\n" +
+                     "  table\n" +
                      "SET\n" +
-                     "  group_number = ?,\n" +
+                     "  group_id = ?,\n" +
                      "WHERE\n" +
-                     "  group_id = ?")
+                     "  student_id = ?")
         ) {
-            statement.setString(1, item.getNumber());
-            statement.setInt(2, id);
+            statement.setInt(1, id);
+            statement.setInt(2, item.getStudentId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException();
@@ -96,9 +92,9 @@ public class GroupDao implements AutoCloseable, ICRUDDao<Group> {
     public void delete(int id) {
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM\n" +
-                     "  groups\n" +
+                     "  table\n" +
                      "WHERE\n" +
-                     "  group_id = ?")
+                     "  student_id = ?")
         ) {
             statement.setInt(1, id);
             statement.executeUpdate();
@@ -107,19 +103,14 @@ public class GroupDao implements AutoCloseable, ICRUDDao<Group> {
         }
     }
 
-    private Group map(ResultSet rs) throws SQLException {
-        return new Group(
-                rs.getInt("group_id"),
-                rs.getString("group_number")
+    public Table map(ResultSet rs) throws SQLException {
+        return new Table(
+                rs.getInt("student_id"),
+                rs.getInt("group_id")
         );
     }
 
-    @Override
-    public void close() throws Exception {
-        ConnectionFactory.close();
-    }
-
-    public static GroupDao getInstance() {
+    public static TableDao getInstance() {
         return instance;
     }
 }

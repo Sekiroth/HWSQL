@@ -1,11 +1,12 @@
 package service;
 
 import dao.GroupDao;
+import dao.api.ICRUDDao;
 import dto.Group;
 
 import java.util.List;
 
-public class GroupService {
+public class GroupService implements ICRUDDao<Group> {
     private static final GroupService instance = new GroupService();
 
     private final GroupDao dao;

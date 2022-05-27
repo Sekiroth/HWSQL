@@ -14,8 +14,8 @@ public class Main1 {
 
 
         StudentService studentService = StudentService.getInstance();
-//        studentService.add(new Student(0, "Mateusz", 15, 2, true));
-        studentService.update(1, new Student(1, "Mateusz", 15, 2, true));
+//        studentService.add(new Student(0, "AAA", 15, 2, true));
+        studentService.update(1, new Student(1, "BBB", 15, 2, true));
         List<Student> students = studentService.readAll();
 
         ObjectMapper mapper = new ObjectMapper();

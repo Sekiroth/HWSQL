@@ -33,3 +33,22 @@ CREATE TABLE IF NOT EXISTS public.groups
 
 ALTER TABLE IF EXISTS public.groups
     OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.table
+(
+    student_id bigint NOT NULL,
+    group_id bigint NOT NULL,
+    CONSTRAINT table_group_id_fkey FOREIGN KEY (group_id)
+    REFERENCES public.groups (group_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION,
+    CONSTRAINT table_student_id_fkey FOREIGN KEY (student_id)
+    REFERENCES public.students (student_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    )
+
+    TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.table
+    OWNER to postgres;

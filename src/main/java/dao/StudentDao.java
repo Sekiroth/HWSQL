@@ -67,9 +67,10 @@ public class StudentDao implements AutoCloseable, ICRUDDao<Student> {
 
     public void add(Student student) {
         try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO " +
-                     "students(student_name, student_age, score, olympic_gamer) " +
-                     "VALUES (?, ?, ?, ?)");
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO\n" +
+                     "  students(student_name, student_age, score, olympic_gamer)\n" +
+                     "VALUES\n" +
+                     "  (?, ?, ?, ?);");
         ) {
             statement.setString(1, student.getName());
             statement.setInt(2, student.getAge());
@@ -84,8 +85,15 @@ public class StudentDao implements AutoCloseable, ICRUDDao<Student> {
     @Override
     public void update(int id, Student item) {
         try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement statement = connection.prepareStatement("UPDATE students " +
-                     "SET student_name=?, student_age=?, score=?, olympic_gamer=? WHERE id=?")
+             PreparedStatement statement = connection.prepareStatement("UPDATE\n" +
+                     "  students\n" +
+                     "SET\n" +
+                     "  student_name = ?,\n" +
+                     "  student_age = ?,\n" +
+                     "  score = ?,\n" +
+                     "  olympic_gamer = ?\n" +
+                     "WHERE\n" +
+                     "  id = ?;")
         ) {
             statement.setString(1, item.getName());
             statement.setInt(2, item.getAge());
@@ -93,6 +101,20 @@ public class StudentDao implements AutoCloseable, ICRUDDao<Student> {
             statement.setBoolean(4, item.isOlympicGamer());
             statement.setInt(5, id);
             statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException();
+        }
+    }
+
+    @Override
+    public void delete(int id) {
+        try (Connection connection = ConnectionFactory.getConnection();
+             Statement statement = connection.createStatement()
+        ) {
+            statement.executeUpdate("DELETE FROM\n" +
+                    "  students\n" +
+                    "WHERE\n" +
+                    "  student_id = " + id + ";");
         } catch (SQLException e) {
             throw new IllegalStateException();
         }

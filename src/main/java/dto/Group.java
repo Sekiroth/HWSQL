@@ -9,6 +9,8 @@ public class Group {
     private List<Student> listOfStudents;
 
     public Group(int id, String groupNumber) {
+        this.id = id;
+        this.number = groupNumber;
     }
 
     public int getId() {

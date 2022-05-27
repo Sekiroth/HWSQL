@@ -1,11 +1,12 @@
 package service;
 
 import dao.StudentDao;
+import dao.api.ICRUDDao;
 import dto.Student;
 
 import java.util.List;
 
-public class StudentService {
+public class StudentService implements ICRUDDao<Student> {
     private static final StudentService instance = new StudentService();
 
     private final StudentDao dao;
@@ -27,12 +28,13 @@ public class StudentService {
     }
 
     public void update(int id, Student student) {
-
+        this.dao.update(id, student);
     }
 
     public void delete(int id) {
-
+        this.dao.delete(id);
     }
+
     public static StudentService getInstance() {
         return instance;
     }
